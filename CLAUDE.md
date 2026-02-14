@@ -93,11 +93,11 @@ Fully polished single-page portfolio with all P0–P3 improvements implemented. 
 10. ✅ **Clickable cards** — Stretched-link pattern, inner links elevated with `z-index`
 11. ✅ **Services section** — 4 cards with SVG icons between hero and projects
 
-### P2 — Medium Impact ✅ Implemented (2 deferred)
+### P2 — Medium Impact ✅ Implemented (1 deferred)
 
 12. ✅ **Accessibility** — Skip-to-content, `:focus-visible`, `aria-label`, `aria-hidden`, `role="navigation"`
 13. ✅ **Mobile nav** — Hamburger toggle, animated X, dropdown with large tap targets, auto-close
-14. ⏳ **Resume/CV download** — Needs PDF file; add to repo then link from About section and nav
+14. ✅ **Resume/CV download** — PDF at `/resume.pdf`, linked from hero buttons
 15. ⏳ **Custom domain** — Purchase domain, connect to Vercel, update OG meta and sitemap
 16. ✅ **Writing section** — 2 post previews ("Crisis Memory Bridge" + "memU SDK") with "Coming soon"
 17. ✅ **Branding** — "II" SVG monogram in nav next to name
@@ -118,7 +118,7 @@ Fully polished single-page portfolio with all P0–P3 improvements implemented. 
 
 1. **Enable Vercel Analytics** — Go to Vercel dashboard > project > Settings > Analytics > Enable
 2. **Custom domain** — Purchase and connect, then update `sitemap.xml` URL and add `og:url` meta tag
-3. **Resume PDF** — Create and add to repo as `/resume.pdf`, then add download button to nav/about
+3. ~~**Resume PDF**~~ — Done
 4. **Write blog posts** — Replace "Coming soon" with actual content for the 2 writing section posts
 5. **Testimonials** — Collect quotes from hackathon judges or YUYU Nihongo client
 6. **More case studies** — Write detailed pages for YUYU Nihongo and other top projects
@@ -143,6 +143,7 @@ Fully polished single-page portfolio with all P0–P3 improvements implemented. 
 portfolio/
 ├── index.html                  # Main portfolio page (~1,140 lines)
 ├── crisis-memory-bridge.html   # Case study page for Crisis Memory Bridge
+├── resume.pdf                  # Downloadable resume
 ├── favicon.svg                 # SVG favicon ("II" initials)
 ├── og-image.png        # Open Graph preview image (1200×630)
 ├── robots.txt          # SEO — allow all crawlers
