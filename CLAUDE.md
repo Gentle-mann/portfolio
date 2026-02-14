@@ -102,11 +102,11 @@ Fully polished single-page portfolio with all P0–P3 improvements implemented. 
 16. ✅ **Writing section** — 2 post previews ("Crisis Memory Bridge" + "memU SDK") with "Coming soon"
 17. ✅ **Branding** — "II" SVG monogram in nav next to name
 
-### P3 — Nice to Have ✅ Implemented (3 deferred)
+### P3 — Nice to Have ✅ Implemented (1 deferred)
 
-18. ⏳ **Case study pages** — Needs content written (problem, architecture, decisions, results)
+18. ✅ **Case study page** — Full Crisis Memory Bridge case study at `/crisis-memory-bridge.html` (problem, architecture, features, results). Linked from project card.
 19. ⏳ **Testimonials** — Needs quotes from hackathon judges or YUYU Nihongo client
-20. ⏳ **GitHub activity** — Skipped (external API complexity vs static site simplicity)
+20. ⛔ **GitHub activity** — Skipped (external API complexity vs static site simplicity)
 21. ✅ **Dark/light mode** — Sun/moon toggle, `prefers-color-scheme` default, `localStorage` persistence
 22. ✅ **Analytics** — Vercel Analytics script tag (enable in Vercel dashboard > Settings > Analytics)
 23. ✅ **JSON-LD structured data** — Person schema in `<head>`
@@ -121,7 +121,7 @@ Fully polished single-page portfolio with all P0–P3 improvements implemented. 
 3. **Resume PDF** — Create and add to repo as `/resume.pdf`, then add download button to nav/about
 4. **Write blog posts** — Replace "Coming soon" with actual content for the 2 writing section posts
 5. **Testimonials** — Collect quotes from hackathon judges or YUYU Nihongo client
-6. **Case studies** — Write detailed pages for top 2-3 projects (Crisis Memory Bridge, YUYU Nihongo)
+6. **More case studies** — Write detailed pages for YUYU Nihongo and other top projects
 7. **Submit to Google Search Console** — Verify site ownership, submit sitemap
 
 ---
@@ -141,8 +141,9 @@ Fully polished single-page portfolio with all P0–P3 improvements implemented. 
 
 ```
 portfolio/
-├── index.html          # Main portfolio page (~1,140 lines)
-├── favicon.svg         # SVG favicon ("II" initials)
+├── index.html                  # Main portfolio page (~1,140 lines)
+├── crisis-memory-bridge.html   # Case study page for Crisis Memory Bridge
+├── favicon.svg                 # SVG favicon ("II" initials)
 ├── og-image.png        # Open Graph preview image (1200×630)
 ├── robots.txt          # SEO — allow all crawlers
 ├── sitemap.xml         # SEO — homepage entry

@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crisis Memory Bridge — Case Study | Ishaq Ibrahim</title>
+  <meta name="description" content="How I built an AI-powered memory layer for crisis counseling hotlines in a weekend. Architecture, LLM orchestration, and the problem of context loss in volunteer handoffs.">
+
+  <meta property="og:title" content="Crisis Memory Bridge — Case Study">
+  <meta property="og:description" content="AI-powered memory layer for crisis counseling hotlines. 2nd place at Vibe Coding Hackathon, Tokyo.">
+  <meta property="og:image" content="/images/crisis-memory-bridge.png">
+  <meta property="og:type" content="article">
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0a0b;
+      --surface: #141416;
+      --surface-hover: #1c1c20;
+      --border: #2a2a2e;
+      --text: #e4e4e7;
+      --text-muted: #8b8b94;
+      --accent: #6d9fff;
+      --accent-soft: rgba(109, 159, 255, 0.1);
+      --green: #4fc78e;
+      --orange: #e5a84f;
+      --red: #e55c5c;
+      --purple: #b28dff;
+      --teal: #4fc7b0;
+      --radius: 12px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--accent); text-decoration: none; transition: opacity 0.2s; }
+    a:hover { opacity: 0.8; }
+
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    :focus:not(:focus-visible) { outline: none; }
+
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(10, 10, 11, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    nav .container {
+      max-width: 960px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 56px;
+    }
+
+    nav .logo {
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--text);
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    nav .logo a { color: var(--text); }
+    nav .logo a:hover { opacity: 0.8; }
+
+    nav .back-link {
+      font-size: 14px;
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    nav .back-link:hover { color: var(--text); opacity: 1; }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .theme-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      transition: color 0.2s;
+    }
+
+    .theme-toggle:hover { color: var(--text); }
+
+    .icon-moon { display: none; }
+    html.light .icon-sun { display: none; }
+    html.light .icon-moon { display: block; }
+
+    /* ── Case Study Hero ── */
+    .case-hero {
+      padding: 140px 0 60px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .case-hero .tag {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-weight: 500;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+
+    .tag-award {
+      background: rgba(229, 168, 79, 0.15);
+      color: var(--orange);
+      border: 1px solid rgba(229, 168, 79, 0.25);
+    }
+
+    .case-hero h1 {
+      font-size: clamp(32px, 5vw, 48px);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -1px;
+      margin-bottom: 16px;
+    }
+
+    .case-hero .subtitle {
+      font-size: 18px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      max-width: 600px;
+      margin-bottom: 28px;
+    }
+
+    .case-meta {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .case-meta strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* ── Content ── */
+    .case-content {
+      padding: 64px 0;
+    }
+
+    .case-content h2 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 20px;
+      margin-top: 64px;
+    }
+
+    .case-content h2:first-child {
+      margin-top: 0;
+    }
+
+    .case-content h3 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-top: 40px;
+      margin-bottom: 12px;
+    }
+
+    .case-content p {
+      font-size: 16px;
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin-bottom: 16px;
+    }
+
+    .case-content ul, .case-content ol {
+      color: var(--text-muted);
+      font-size: 16px;
+      line-height: 1.8;
+      margin-bottom: 16px;
+      padding-left: 24px;
+    }
+
+    .case-content li { margin-bottom: 6px; }
+
+    .case-content strong { color: var(--text); }
+
+    /* ── Screenshot ── */
+    .case-screenshot {
+      width: 100%;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin: 32px 0;
+    }
+
+    /* ── Comparison Table ── */
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 24px 0 32px;
+      font-size: 15px;
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .comparison-table th {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .comparison-table td {
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .comparison-table td:last-child {
+      color: var(--text);
+    }
+
+    /* ── Stats Grid ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin: 32px 0;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+
+    .stat-card .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    .stat-card .stat-label {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* ── Feature List ── */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 24px 0 32px;
+    }
+
+    .feature-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .feature-item h4 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .feature-item p {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 0;
+      line-height: 1.6;
+    }
+
+    /* ── Tech Stack ── */
+    .tech-list {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 16px 0 32px;
+    }
+
+    .tech-pill {
+      font-size: 13px;
+      padding: 6px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--text-muted);
+    }
+
+    /* ── Architecture ── */
+    .arch-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      margin: 24px 0 32px;
+      font-family: 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--text-muted);
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    /* ── Blockquote ── */
+    .case-content blockquote {
+      border-left: 3px solid var(--accent);
+      padding-left: 20px;
+      margin: 28px 0;
+      font-size: 18px;
+      font-style: italic;
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    /* ── CTA ── */
+    .case-cta {
+      padding: 64px 0;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .case-cta h2 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .case-cta p {
+      color: var(--text-muted);
+      font-size: 16px;
+      margin-bottom: 28px;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta-links {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #0a0a0b;
+    }
+
+    .btn-primary:hover { opacity: 0.9; color: #0a0a0b; }
+
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover { background: var(--surface-hover); color: var(--text); }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    footer .container {
+      max-width: 960px;
+    }
+
+    /* ── Light mode ── */
+    html.light {
+      --bg: #fafafa;
+      --surface: #ffffff;
+      --surface-hover: #f0f0f2;
+      --border: #e4e4e7;
+      --text: #18181b;
+      --text-muted: #52525b;
+      --accent: #4a7ff7;
+      --accent-soft: rgba(74, 127, 247, 0.08);
+      --green: #16a34a;
+      --orange: #d97706;
+      --purple: #7c3aed;
+      --teal: #0d9488;
+    }
+
+    html.light nav { background: rgba(250, 250, 250, 0.85); }
+    html.light .btn-primary { color: #ffffff; }
+    html.light .btn-primary:hover { color: #ffffff; }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .case-hero { padding: 100px 0 40px; }
+      .case-content h2 { font-size: 24px; margin-top: 48px; }
+      .feature-grid { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .case-meta { gap: 16px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav role="navigation" aria-label="Main navigation">
+    <div class="container">
+      <span class="logo">
+        <a href="/">
+          <svg class="logo-mark" width="24" height="24" viewBox="0 0 32 32" aria-hidden="true">
+            <rect width="32" height="32" rx="6" fill="var(--accent)"/>
+            <text x="16" y="22" text-anchor="middle" font-family="-apple-system,system-ui,sans-serif" font-size="18" font-weight="700" fill="var(--bg)">II</text>
+          </svg>
+        </a>
+      </span>
+      <div class="nav-actions">
+        <a href="/" class="back-link">&larr; Back to portfolio</a>
+        <button class="theme-toggle" aria-label="Toggle light mode">
+          <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          </svg>
+          <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="case-hero">
+    <div class="container">
+      <span class="tag tag-award">2nd Place — Vibe Coding Hackathon, Tokyo 2026</span>
+      <h1>Crisis Memory Bridge</h1>
+      <p class="subtitle">An AI-powered memory layer for crisis counseling hotlines. When a caller reaches out again and gets a different volunteer, the new volunteer already has full context. The caller never has to re-explain their worst moment to a stranger.</p>
+      <div class="case-meta">
+        <span><strong>Role:</strong> Solo developer</span>
+        <span><strong>Timeline:</strong> 1 day (hackathon)</span>
+        <span><strong>Stack:</strong> FastAPI, Claude API, memU, SSE</span>
+        <span><strong>Status:</strong> <a href="https://web-production-b1d2c.up.railway.app/" target="_blank" rel="noopener">Live on Railway</a></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <div class="case-content">
+    <div class="container">
+
+      <img src="images/crisis-memory-bridge.png" alt="Crisis Memory Bridge interface showing the setup screen" class="case-screenshot">
+
+      <h2>The Problem</h2>
+
+      <p>Japan has one of the highest suicide rates among developed nations. In 2022, over 21,000 people died by suicide — roughly 58 people per day. Crisis hotlines are a critical lifeline, but they share a structural problem that no amount of volunteer training can solve.</p>
+
+      <p><strong>Inochi no Denwa</strong> — Japan's oldest crisis hotline — operates with 7,000 volunteers handling 700,000 calls per year. <strong>Yorisoi Hotline</strong> provides 24-hour multilingual support. <strong>TELL Lifeline</strong> serves the English-speaking community. These organizations do extraordinary work.</p>
+
+      <p>But when a caller reaches out again, they almost certainly get a different volunteer. That volunteer has zero context. The caller must re-explain their situation, their triggers, what was tried before, what helped — from scratch.</p>
+
+      <blockquote>No one should have to retell their trauma because the shift changed.</blockquote>
+
+      <h3>Why This Matters</h3>
+
+      <ul>
+        <li><strong>Re-traumatization:</strong> Asking someone in crisis to retell their worst moment to a stranger is itself harmful. Forced narrative repetition can intensify trauma responses.</li>
+        <li><strong>No institutional memory:</strong> Individual volunteers may remember a caller, but the organization doesn't. Each interaction starts at zero.</li>
+        <li><strong>Volunteer burnout:</strong> Without context, volunteers spend time in assessment mode rather than support mode — exhausting for both parties.</li>
+        <li><strong>Missed escalation:</strong> A caller's risk may be trending upward across sessions, but if each session is independent, no one sees the trajectory.</li>
+      </ul>
+
+      <h2>The Solution</h2>
+
+      <p>Crisis Memory Bridge adds an AI-powered memory layer between sessions. It observes conversations, extracts structured context in real-time, and surfaces that context to the next volunteer — automatically.</p>
+
+      <ol>
+        <li><strong>Volunteer A</strong> talks with a caller. The AI observes and extracts context in real-time — triggers, mood, strategies, risk level — into a live sidebar.</li>
+        <li>Session ends. The AI extracts structured memories and stores them.</li>
+        <li><strong>Volunteer B</strong> connects with the same caller. Before the conversation starts, they see a full briefing, memory timeline, and changes since the last session.</li>
+        <li>The caller feels known. They don't have to start over.</li>
+      </ol>
+
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Without Memory</th>
+            <th>With Memory</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>"Can you tell me what's going on?"</td>
+            <td>"I see you've been dealing with job loss. How have things been?"</td>
+          </tr>
+          <tr>
+            <td>Caller re-explains trauma</td>
+            <td>Caller feels known and safe</td>
+          </tr>
+          <tr>
+            <td>Volunteer spends 10 min assessing</td>
+            <td>Volunteer starts with context</td>
+          </tr>
+          <tr>
+            <td>Risk trends invisible</td>
+            <td>Risk escalation flagged automatically</td>
+          </tr>
+          <tr>
+            <td>Each session isolated</td>
+            <td>Continuous care across volunteers</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Architecture</h2>
+
+      <div class="arch-block">Frontend (Vanilla HTML/CSS/JS)
+│   Setup Screen → Chat → Extraction → Reset
+│   SSE streaming, timeline rendering, live context
+│
+├── HTTP + Server-Sent Events
+│
+Backend (FastAPI + Python)
+├── LLM Service (Claude API)
+│   8 distinct operations, 3 run in parallel
+│
+├── Memory Store (Abstract)
+│   ├── LocalMemoryStore → JSON on disk (primary)
+│   └── HybridMemoryStore → Local + memU (supplementary)
+│
+└── SSE Streaming
+    token → stream_end → done (context + coaching)</div>
+
+      <h3>LLM Orchestration</h3>
+
+      <p>Every LLM call routes through a central service with 8 distinct operations. The key insight: <strong>live context extraction, volunteer coaching, and reply suggestions run in parallel</strong> after each message exchange — 3 concurrent LLM calls, zero added latency.</p>
+
+      <p>The streaming architecture splits into two events: <code>stream_end</code> (re-enables volunteer input immediately) and <code>done</code> (delivers context/coaching 2-4 seconds later). The volunteer can start composing their next message while background analysis completes.</p>
+
+      <h3>Hybrid Memory</h3>
+
+      <p>Memory is stored in two complementary layers:</p>
+
+      <ul>
+        <li><strong>Local structured store</strong> — Domain-specific schema (triggers, risk level, safety plan, warnings, strategies) as JSON. Powers the timeline, diffs, and briefings. Always the primary system.</li>
+        <li><strong>memU semantic layer</strong> — Receives raw conversations and provides supplementary context that structured extraction missed (personal details, emotional patterns, offhand mentions). Optional — app works identically without it.</li>
+      </ul>
+
+      <p>On handoff, the new volunteer sees <strong>"Changes Since Last Session"</strong> — color-coded items showing new triggers (yellow), risk escalations (red), and newly effective strategies (green). This is the single most valuable piece of information for a handoff.</p>
+
+      <h3>Tech Stack</h3>
+
+      <div class="tech-list">
+        <span class="tech-pill">Python 3.13</span>
+        <span class="tech-pill">FastAPI</span>
+        <span class="tech-pill">Claude Sonnet 4.5</span>
+        <span class="tech-pill">memU SDK</span>
+        <span class="tech-pill">SSE Streaming</span>
+        <span class="tech-pill">Vanilla JS</span>
+        <span class="tech-pill">Web Audio API</span>
+        <span class="tech-pill">Web Speech API</span>
+        <span class="tech-pill">Railway</span>
+      </div>
+
+      <h2>Key Features</h2>
+
+      <div class="feature-grid">
+        <div class="feature-item">
+          <h4>Live Context Extraction</h4>
+          <p>Sidebar updates in real-time as the conversation progresses — triggers, mood, risk level, effective strategies.</p>
+        </div>
+        <div class="feature-item">
+          <h4>Volunteer Coaching</h4>
+          <p>Each message scored with technique identification and feedback. Color-coded inline hints (good/needs improvement/caution).</p>
+        </div>
+        <div class="feature-item">
+          <h4>Risk Escalation Alerts</h4>
+          <p>Flashing red banner when risk increases. Emergency protocol overlay with safety checklist at high risk.</p>
+        </div>
+        <div class="feature-item">
+          <h4>Smart Reply Suggestions</h4>
+          <p>Context-aware openers for returning callers. LLM-generated follow-ups after each exchange. Click to populate input.</p>
+        </div>
+        <div class="feature-item">
+          <h4>Session Timeline & Diffs</h4>
+          <p>Visual timeline across sessions with cross-session change detection. NEW, ESCALATED, and WORKED items highlighted.</p>
+        </div>
+        <div class="feature-item">
+          <h4>Full EN/JA Localization</h4>
+          <p>Every string, LLM output, voice input, and system message in both English and Japanese. 75+ translation keys.</p>
+        </div>
+        <div class="feature-item">
+          <h4>Supervisor Dashboard</h4>
+          <p>Multi-caller grid, risk trend charts, session replay with timed playback, and per-caller analytics.</p>
+        </div>
+        <div class="feature-item">
+          <h4>Voice Input & Sound Alerts</h4>
+          <p>Web Speech API for hands-free dictation. Web Audio API oscillator tones for risk alerts and background notifications.</p>
+        </div>
+      </div>
+
+      <h2>Results</h2>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value">2nd Place</div>
+          <div class="stat-label">Vibe Coding with Memory Hackathon, Shibuya Hikarie</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">8</div>
+          <div class="stat-label">Parallel LLM operations orchestrated per exchange</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">EN/JA</div>
+          <div class="stat-label">Full bilingual support across all features</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">1 day</div>
+          <div class="stat-label">Built from scratch at a hackathon</div>
+        </div>
+      </div>
+
+      <h2>Beyond Crisis Counseling</h2>
+
+      <p>The memory-layer-for-handoff pattern applies wherever humans are passed between helpers:</p>
+
+      <ul>
+        <li><strong>Healthcare:</strong> Nursing shift handoffs, primary care continuity, ED triage for returning patients</li>
+        <li><strong>Social services:</strong> Caseworker turnover, refugee resettlement, homeless outreach</li>
+        <li><strong>Education:</strong> IEP tracking across teachers, school counselor transitions, tutoring platforms</li>
+        <li><strong>Legal:</strong> Public defenders with high caseloads, immigration legal aid spanning years</li>
+      </ul>
+
+      <blockquote>The volunteer changes. The context doesn't.</blockquote>
+
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <section class="case-cta">
+    <div class="container">
+      <h2>Try it yourself</h2>
+      <p>Crisis Memory Bridge is live and open source. Enter "Volunteer B" and "caller-001" to see the returning caller handoff in action.</p>
+      <div class="cta-links">
+        <a href="https://web-production-b1d2c.up.railway.app/" class="btn btn-primary" target="_blank" rel="noopener">Live Demo</a>
+        <a href="https://github.com/Gentle-mann/crisis-memory-bridge" class="btn btn-secondary" target="_blank" rel="noopener">Source Code</a>
+        <a href="/" class="btn btn-secondary">Back to Portfolio</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      Ishaq Ibrahim &middot; Tokyo, Japan
+    </div>
+  </footer>
+
+  <script>
+    // Theme toggle
+    const themeBtn = document.querySelector('.theme-toggle');
+    const saved = localStorage.getItem('theme');
+
+    if (saved === 'light' || (!saved && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+      document.documentElement.classList.add('light');
+    }
+
+    themeBtn.addEventListener('click', () => {
+      document.documentElement.classList.toggle('light');
+      localStorage.setItem('theme', document.documentElement.classList.contains('light') ? 'light' : 'dark');
+    });
+  </script>
+
+</body>
+</html>
