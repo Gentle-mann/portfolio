@@ -4,7 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ishaq Ibrahim — AI-Powered Web Applications</title>
-  <meta name="description" content="I build AI-powered web applications. Full-stack developer specializing in LLM integration, real-time systems, and products that solve real problems.">
+  <meta name="description" content="I build AI-powered web applications. Full-stack developer in Tokyo specializing in LLM integration, real-time systems, and products that solve real problems.">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Ishaq Ibrahim — AI-Powered Web Applications">
+  <meta property="og:description" content="Full-stack developer in Tokyo. I build AI-integrated products for crisis counseling, mental health, legal protection, and more.">
+  <meta property="og:image" content="/og-image.png">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Ishaq Ibrahim — AI-Powered Web Applications">
+  <meta name="twitter:description" content="Full-stack developer in Tokyo building AI-integrated products.">
+  <meta name="twitter:image" content="/og-image.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -21,6 +37,7 @@
       --orange: #e5a84f;
       --red: #e55c5c;
       --purple: #b28dff;
+      --teal: #4fc7b0;
       --radius: 12px;
     }
 
@@ -185,7 +202,7 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 32px;
+      overflow: hidden;
       transition: border-color 0.2s, transform 0.2s;
     }
 
@@ -194,11 +211,44 @@
       transform: translateY(-2px);
     }
 
+    .project-card-body {
+      padding: 28px 32px 32px;
+    }
+
+    /* Featured project */
+    .project-card.featured {
+      border-color: rgba(109, 159, 255, 0.3);
+      background: linear-gradient(135deg, var(--surface) 0%, rgba(109, 159, 255, 0.04) 100%);
+    }
+
+    .project-card.featured:hover {
+      border-color: rgba(109, 159, 255, 0.5);
+    }
+
+    .featured-label {
+      display: inline-block;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--accent);
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    /* Project image */
+    .project-image {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      display: block;
+      border-bottom: 1px solid var(--border);
+    }
+
     .project-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       gap: 16px;
     }
 
@@ -240,11 +290,36 @@
       border: 1px solid rgba(178, 141, 255, 0.25);
     }
 
+    .tag-client {
+      background: rgba(79, 199, 176, 0.15);
+      color: var(--teal);
+      border: 1px solid rgba(79, 199, 176, 0.25);
+    }
+
     .project-desc {
       color: var(--text-muted);
       font-size: 15px;
       line-height: 1.7;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
+    }
+
+    /* Stats row */
+    .project-stats {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .stat {
+      font-size: 13px;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .stat .stat-value {
+      color: var(--accent);
+      font-weight: 600;
     }
 
     .project-tech {
@@ -353,10 +428,12 @@
       .hero { padding: 120px 0 60px; }
       section { padding: 60px 0; }
       .project-header { flex-direction: column; }
+      .project-card-body { padding: 20px; }
       .about-content { grid-template-columns: 1fr; gap: 32px; }
       nav .nav-links { gap: 16px; }
       nav .nav-links a { font-size: 13px; }
       .contact-links { flex-direction: column; align-items: center; }
+      .project-stats { gap: 10px; }
     }
   </style>
 </head>
@@ -395,135 +472,182 @@
 
       <div class="projects-grid">
 
-        <!-- Crisis Memory Bridge -->
-        <div class="project-card">
-          <div class="project-header">
-            <span class="project-name">Crisis Memory Bridge</span>
-            <div class="project-tags">
-              <span class="tag tag-award">2nd Place</span>
-              <span class="tag tag-live">Live</span>
+        <!-- Crisis Memory Bridge — FEATURED -->
+        <div class="project-card featured">
+          <img src="images/crisis-memory-bridge.png" alt="Crisis Memory Bridge — setup screen showing volunteer name input, caller ID, and language toggle" class="project-image" loading="eager">
+          <div class="project-card-body">
+            <div class="featured-label">Featured Project</div>
+            <div class="project-header">
+              <span class="project-name">Crisis Memory Bridge</span>
+              <div class="project-tags">
+                <span class="tag tag-award">2nd Place</span>
+                <span class="tag tag-live">Live</span>
+              </div>
             </div>
-          </div>
-          <p class="project-desc">AI-powered memory layer for crisis counseling hotlines. When a caller reaches out again and gets a different volunteer, the new volunteer already has full context — triggers, what worked, safety plan, session history. The caller never has to re-explain their worst moment to a stranger. Built for Japan's Vibe Coding with Memory Hackathon.</p>
-          <div class="project-tech">
-            <span class="tech-tag">FastAPI</span>
-            <span class="tech-tag">Claude API</span>
-            <span class="tech-tag">memU</span>
-            <span class="tech-tag">SSE Streaming</span>
-            <span class="tech-tag">Vanilla JS</span>
-          </div>
-          <div class="project-links">
-            <a href="https://web-production-b1d2c.up.railway.app/" target="_blank" rel="noopener">Live Demo &rarr;</a>
-            <a href="https://github.com/Gentle-mann/crisis-memory-bridge" target="_blank" rel="noopener">Source Code &rarr;</a>
+            <p class="project-desc">AI-powered memory layer for crisis counseling hotlines. When a caller reaches out again and gets a different volunteer, the new volunteer already has full context — triggers, what worked, safety plan, session history. The caller never has to re-explain their worst moment to a stranger.</p>
+            <div class="project-stats">
+              <span class="stat"><span class="stat-value">2nd Place</span> Vibe Coding Hackathon, Shibuya Hikarie</span>
+              <span class="stat"><span class="stat-value">8</span> parallel LLM operations</span>
+              <span class="stat"><span class="stat-value">EN/JA</span> full i18n</span>
+            </div>
+            <div class="project-tech">
+              <span class="tech-tag">FastAPI</span>
+              <span class="tech-tag">Claude API</span>
+              <span class="tech-tag">memU</span>
+              <span class="tech-tag">SSE Streaming</span>
+              <span class="tech-tag">Vanilla JS</span>
+            </div>
+            <div class="project-links">
+              <a href="https://web-production-b1d2c.up.railway.app/" target="_blank" rel="noopener">Live Demo &rarr;</a>
+              <a href="https://github.com/Gentle-mann/crisis-memory-bridge" target="_blank" rel="noopener">Source Code &rarr;</a>
+            </div>
           </div>
         </div>
 
         <!-- ShieldAgent -->
         <div class="project-card">
-          <div class="project-header">
-            <span class="project-name">ShieldAgent</span>
-            <div class="project-tags">
-              <span class="tag tag-live">Live</span>
-              <span class="tag tag-hackathon">Hackathon</span>
+          <img src="images/shieldagent.png" alt="ShieldAgent — AI legal shield interface for migrant worker protection" class="project-image" loading="lazy">
+          <div class="project-card-body">
+            <div class="project-header">
+              <span class="project-name">ShieldAgent</span>
+              <div class="project-tags">
+                <span class="tag tag-live">Live</span>
+                <span class="tag tag-hackathon">Hackathon</span>
+              </div>
             </div>
-          </div>
-          <p class="project-desc">AI legal shield that protects migrant workers in Japan from wage theft and exploitation. Analyzes employment contracts against labor law, flags violations with specific legal citations, and stores evidence immutably on-chain. Supports Vietnamese, Chinese, Filipino, Indonesian, Myanmar, and Nepali workers.</p>
-          <div class="project-tech">
-            <span class="tech-tag">SpoonOS</span>
-            <span class="tech-tag">Neo Blockchain</span>
-            <span class="tech-tag">Claude API</span>
-            <span class="tech-tag">SHISA.AI</span>
-            <span class="tech-tag">Streamlit</span>
-          </div>
-          <div class="project-links">
-            <a href="https://shieldagent-hackathon-jvbnsbtsbmxbtcdvhsnzkd.streamlit.app/" target="_blank" rel="noopener">Live Demo &rarr;</a>
-            <a href="https://github.com/Gentle-mann" target="_blank" rel="noopener">Source Code &rarr;</a>
+            <p class="project-desc">AI legal shield that protects migrant workers in Japan from wage theft and exploitation. Analyzes employment contracts against labor law, flags violations with specific legal citations, and stores evidence immutably on-chain.</p>
+            <div class="project-stats">
+              <span class="stat"><span class="stat-value">6</span> languages supported</span>
+              <span class="stat"><span class="stat-value">2M+</span> workers affected in Japan</span>
+            </div>
+            <div class="project-tech">
+              <span class="tech-tag">SpoonOS</span>
+              <span class="tech-tag">Neo Blockchain</span>
+              <span class="tech-tag">Claude API</span>
+              <span class="tech-tag">SHISA.AI</span>
+              <span class="tech-tag">Streamlit</span>
+            </div>
+            <div class="project-links">
+              <a href="https://shieldagent-hackathon-jvbnsbtsbmxbtcdvhsnzkd.streamlit.app/" target="_blank" rel="noopener">Live Demo &rarr;</a>
+              <a href="https://github.com/Gentle-mann" target="_blank" rel="noopener">Source Code &rarr;</a>
+            </div>
           </div>
         </div>
 
         <!-- MamaKokoro -->
         <div class="project-card">
-          <div class="project-header">
-            <span class="project-name">MamaKokoro</span>
-            <div class="project-tags">
-              <span class="tag tag-live">Live</span>
-              <span class="tag tag-hackathon">Hackathon</span>
+          <img src="images/mama-kokoro.png" alt="MamaKokoro — AI companion for postpartum depression with chat and mood tracking" class="project-image" loading="lazy">
+          <div class="project-card-body">
+            <div class="project-header">
+              <span class="project-name">MamaKokoro</span>
+              <div class="project-tags">
+                <span class="tag tag-live">Live</span>
+                <span class="tag tag-hackathon">Hackathon</span>
+              </div>
             </div>
-          </div>
-          <p class="project-desc">AI companion for mothers experiencing postpartum depression. Features phase-aware chat that adapts from pregnancy through postpartum, EPDS screening (Edinburgh Postnatal Depression Scale), daily mood tracking, crisis detection with Japan-specific hotlines, and persistent memory that learns each mother's patterns over time.</p>
-          <div class="project-tech">
-            <span class="tech-tag">React</span>
-            <span class="tech-tag">Express</span>
-            <span class="tech-tag">Supabase</span>
-            <span class="tech-tag">Gemini</span>
-            <span class="tech-tag">memU</span>
-          </div>
-          <div class="project-links">
-            <a href="https://mama-kokoro.vercel.app" target="_blank" rel="noopener">Live Demo &rarr;</a>
-            <a href="https://github.com/Gentle-mann/mama-kokoro" target="_blank" rel="noopener">Source Code &rarr;</a>
+            <p class="project-desc">AI companion for mothers experiencing postpartum depression. Phase-aware chat that adapts from pregnancy through postpartum, EPDS screening, daily mood tracking, crisis detection with Japan-specific hotlines, and persistent memory that learns each mother's patterns.</p>
+            <div class="project-stats">
+              <span class="stat"><span class="stat-value">7</span> memory categories</span>
+              <span class="stat"><span class="stat-value">4-tier</span> crisis detection</span>
+            </div>
+            <div class="project-tech">
+              <span class="tech-tag">React</span>
+              <span class="tech-tag">Express</span>
+              <span class="tech-tag">Supabase</span>
+              <span class="tech-tag">Gemini</span>
+              <span class="tech-tag">memU</span>
+            </div>
+            <div class="project-links">
+              <a href="https://mama-kokoro.vercel.app" target="_blank" rel="noopener">Live Demo &rarr;</a>
+              <a href="https://github.com/Gentle-mann/mama-kokoro" target="_blank" rel="noopener">Source Code &rarr;</a>
+            </div>
           </div>
         </div>
 
         <!-- NeoLocal -->
         <div class="project-card">
-          <div class="project-header">
-            <span class="project-name">NeoLocal</span>
-            <div class="project-tags">
-              <span class="tag tag-live">Live</span>
-              <span class="tag tag-hackathon">Hackathon</span>
+          <img src="images/neolocal.png" alt="NeoLocal — AI agent matching Web3 tourists with local community members in Japan" class="project-image" loading="lazy">
+          <div class="project-card-body">
+            <div class="project-header">
+              <span class="project-name">NeoLocal</span>
+              <div class="project-tags">
+                <span class="tag tag-live">Live</span>
+                <span class="tag tag-hackathon">Hackathon</span>
+              </div>
             </div>
-          </div>
-          <p class="project-desc">Autonomous AI agent that connects international Web3 tourists visiting Japan with local community members. LLM-driven matchmaking based on interests and on-chain reputation, real-time bilingual translation with Web3 terminology awareness, and portable attestations on Neo N3 blockchain.</p>
-          <div class="project-tech">
-            <span class="tech-tag">FastAPI</span>
-            <span class="tech-tag">SpoonOS</span>
-            <span class="tech-tag">Neo N3</span>
-            <span class="tech-tag">SHISA.AI</span>
-          </div>
-          <div class="project-links">
-            <a href="https://neolocal.vercel.app/" target="_blank" rel="noopener">Live Demo &rarr;</a>
-            <a href="https://github.com/Gentle-mann" target="_blank" rel="noopener">Source Code &rarr;</a>
+            <p class="project-desc">Autonomous AI agent that connects international Web3 tourists visiting Japan with local community members. LLM-driven matchmaking based on interests and on-chain reputation, real-time bilingual translation, and portable attestations on Neo N3 blockchain.</p>
+            <div class="project-stats">
+              <span class="stat"><span class="stat-value">Bilingual</span> AI matching</span>
+              <span class="stat"><span class="stat-value">On-chain</span> reputation</span>
+            </div>
+            <div class="project-tech">
+              <span class="tech-tag">FastAPI</span>
+              <span class="tech-tag">SpoonOS</span>
+              <span class="tech-tag">Neo N3</span>
+              <span class="tech-tag">SHISA.AI</span>
+            </div>
+            <div class="project-links">
+              <a href="https://neolocal.vercel.app/" target="_blank" rel="noopener">Live Demo &rarr;</a>
+              <a href="https://github.com/Gentle-mann" target="_blank" rel="noopener">Source Code &rarr;</a>
+            </div>
           </div>
         </div>
 
         <!-- Tomato RAG -->
         <div class="project-card">
-          <div class="project-header">
-            <span class="project-name">Tomato RAG Chatbot</span>
-          </div>
-          <p class="project-desc">Multilingual RAG chatbot that answers tomato cultivation questions from Japanese PDF manuals and video transcripts. Hybrid search with dense + sparse vectors via RRF fusion, source-aware citations, response caching with Redis (300x speedup on cache hits), and automatic query translation across English, Nepali, and Japanese.</p>
-          <div class="project-tech">
-            <span class="tech-tag">FastAPI</span>
-            <span class="tech-tag">Next.js</span>
-            <span class="tech-tag">Qdrant</span>
-            <span class="tech-tag">BGE-M3</span>
-            <span class="tech-tag">Claude</span>
-            <span class="tech-tag">Redis</span>
-          </div>
-          <div class="project-links">
-            <a href="https://github.com/Gentle-mann" target="_blank" rel="noopener">Source Code &rarr;</a>
+          <img src="images/tomato-rag.png" alt="Tomato RAG Chatbot — multilingual agricultural knowledge system" class="project-image" loading="lazy">
+          <div class="project-card-body">
+            <div class="project-header">
+              <span class="project-name">Tomato RAG Chatbot</span>
+            </div>
+            <p class="project-desc">Multilingual RAG chatbot that answers tomato cultivation questions from Japanese PDF manuals and video transcripts. Hybrid search with dense + sparse vectors, source-aware citations, and automatic query translation across English, Nepali, and Japanese.</p>
+            <div class="project-stats">
+              <span class="stat"><span class="stat-value">300x</span> cache speedup</span>
+              <span class="stat"><span class="stat-value">3</span> languages</span>
+              <span class="stat"><span class="stat-value">Hybrid</span> dense + sparse search</span>
+            </div>
+            <div class="project-tech">
+              <span class="tech-tag">FastAPI</span>
+              <span class="tech-tag">Next.js</span>
+              <span class="tech-tag">Qdrant</span>
+              <span class="tech-tag">BGE-M3</span>
+              <span class="tech-tag">Claude</span>
+              <span class="tech-tag">Redis</span>
+            </div>
+            <div class="project-links">
+              <a href="https://github.com/Gentle-mann" target="_blank" rel="noopener">Source Code &rarr;</a>
+            </div>
           </div>
         </div>
 
         <!-- YUYU Nihongo -->
         <div class="project-card">
-          <div class="project-header">
-            <span class="project-name">YUYU Nihongo</span>
-            <div class="project-tags">
-              <span class="tag tag-live">Live</span>
+          <img src="images/yuyu-nihongo.png" alt="YUYU Nihongo — Japanese learning podcast platform with e-books and lessons" class="project-image" loading="lazy">
+          <div class="project-card-body">
+            <div class="project-header">
+              <span class="project-name">YUYU Nihongo</span>
+              <div class="project-tags">
+                <span class="tag tag-client">Client Project</span>
+                <span class="tag tag-live">Live</span>
+              </div>
             </div>
-          </div>
-          <p class="project-desc">Multi-language platform for a Japanese learning podcast with 4,200+ students and 434+ episodes. Features JLPT-graded e-books across all 5 levels, private lesson booking via Calendly, student testimonials, and content localized in English, Japanese, and Spanish.</p>
-          <div class="project-tech">
-            <span class="tech-tag">Next.js</span>
-            <span class="tech-tag">React</span>
-            <span class="tech-tag">TypeScript</span>
-            <span class="tech-tag">Tailwind</span>
-            <span class="tech-tag">Vercel</span>
-          </div>
-          <div class="project-links">
-            <a href="https://open.spotify.com/show/0hQDsR0brfk88Nls8fydo4" target="_blank" rel="noopener">Podcast &rarr;</a>
-            <a href="https://github.com/Gentle-mann" target="_blank" rel="noopener">Source Code &rarr;</a>
+            <p class="project-desc">Multi-language platform for a Japanese learning podcast. JLPT-graded e-books across all 5 levels, private lesson booking, student testimonials, and content localized in English, Japanese, and Spanish.</p>
+            <div class="project-stats">
+              <span class="stat"><span class="stat-value">4,200+</span> students</span>
+              <span class="stat"><span class="stat-value">434+</span> episodes</span>
+              <span class="stat"><span class="stat-value">5</span> JLPT levels</span>
+            </div>
+            <div class="project-tech">
+              <span class="tech-tag">Next.js</span>
+              <span class="tech-tag">React</span>
+              <span class="tech-tag">TypeScript</span>
+              <span class="tech-tag">Tailwind</span>
+              <span class="tech-tag">Vercel</span>
+            </div>
+            <div class="project-links">
+              <a href="https://open.spotify.com/show/0hQDsR0brfk88Nls8fydo4" target="_blank" rel="noopener">Podcast &rarr;</a>
+              <a href="https://github.com/Gentle-mann" target="_blank" rel="noopener">Source Code &rarr;</a>
+            </div>
           </div>
         </div>
 
