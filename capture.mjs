@@ -5,7 +5,7 @@ const projects = [
   { name: 'shieldagent', url: 'https://shieldagent-hackathon-jvbnsbtsbmxbtcdvhsnzkd.streamlit.app/' },
   { name: 'mama-kokoro', url: 'https://mama-kokoro.vercel.app' },
   { name: 'neolocal', url: 'https://neolocal.vercel.app/' },
-  { name: 'yuyu-nihongo', url: 'https://yuyunihongo.com' },
+  { name: 'yuyu-nihongo', url: 'https://yuyu-nihongo-website.vercel.app/' },
 ];
 
 const browser = await chromium.launch();
