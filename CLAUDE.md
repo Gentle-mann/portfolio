@@ -2,253 +2,160 @@
 
 Single-page developer portfolio. Static HTML/CSS/JS, deployed on Vercel.
 
-- **Live**: (Vercel — pending deployment)
+- **Live**: https://portfolio-gentle-mann.vercel.app (Vercel auto-deploy from main)
 - **GitHub**: https://github.com/Gentle-mann/portfolio
 
 ---
 
 ## Current State
 
-One `index.html` file with embedded CSS and no JavaScript. Dark theme, 6 project cards, about section, contact section. Functional but text-only — no images, no animations, no interactivity beyond hover states.
+Fully polished single-page portfolio with all P0–P3 improvements implemented. Dark/light mode, 6 project cards with screenshots, services section, writing section, scroll animations, hamburger mobile nav, accessibility features, SEO, and structured data.
+
+### What's in `index.html` (~1,140 lines)
+
+**Head:**
+- OG + Twitter Card meta tags with `/og-image.png`
+- SVG favicon (`/favicon.svg` — "II" initials)
+- JSON-LD Person structured data (name, title, skills, GitHub, LinkedIn)
+
+**CSS (~700 lines embedded):**
+- CSS custom properties for theming (`:root` dark, `html.light` overrides)
+- Nav: fixed, blurred backdrop, logo with "II" SVG monogram, hamburger on mobile
+- Hero: gradient mesh background (3 radial blobs), "Available for work" badge
+- Services: 2×2 grid with SVG icons (AI, Full-Stack, Real-Time, Multilingual)
+- Projects: cards with screenshots, stretched-link (entire card clickable), featured treatment for Crisis Memory Bridge, tag taxonomy (award/live/hackathon/client), stats row
+- Writing: 2-column post preview cards ("Coming soon" placeholders)
+- About: 2-column layout (text + stack/recognition)
+- Contact: centered CTA with email, GitHub, LinkedIn
+- Scroll animations: `.fade-in-up` + `.visible` via IntersectionObserver, staggered services
+- Accessibility: `.skip-link`, `.sr-only`, `:focus-visible` outlines
+- Theme toggle: `.theme-toggle` with sun/moon SVG icons
+- Responsive: hamburger nav, single-column grids, stacked hero buttons at 640px
+- `prefers-reduced-motion`: disables all animations
+
+**JavaScript (~50 lines):**
+- `document.documentElement.classList.add('js')` — enables animation CSS (graceful degradation)
+- `IntersectionObserver` for scroll fade-in animations (threshold 0.1, unobserve after visible)
+- `IntersectionObserver` for active nav link highlighting (rootMargin `-40% 0px -55% 0px`)
+- Mobile nav toggle with `aria-expanded`, auto-close on link click
+- Theme toggle: respects `prefers-color-scheme`, persists to `localStorage`
+- Vercel Analytics script tag (activate in Vercel dashboard)
+
+### Sections (top to bottom)
+
+| Section | Nav link | Key features |
+|---------|----------|-------------|
+| Hero | — | Gradient mesh bg, "Available for work" badge, CTA buttons |
+| Services | #services | 4 cards: AI Integration, Full-Stack, Real-Time, Multilingual |
+| Projects | #projects | 6 cards with screenshots, stats, tags, stretched links |
+| Writing | #writing | 2 post previews (coming soon) |
+| About | #about | Bio + stack list + recognition |
+| Contact | #contact | Email, GitHub, LinkedIn buttons |
+
+### Project Cards
+
+| Project | Primary URL | Tags | Key Stats |
+|---------|-----------|------|-----------|
+| Crisis Memory Bridge | railway.app | Featured, 2nd Place, Live | 8 LLM ops, EN/JA i18n |
+| ShieldAgent | streamlit.app | Live, Hackathon | 6 languages, 2M+ workers |
+| MamaKokoro | vercel.app | Live, Hackathon | 7 memory categories, 4-tier crisis |
+| NeoLocal | vercel.app | Live, Hackathon | Bilingual AI, on-chain reputation |
+| Tomato RAG | GitHub | — | 300x cache, 3 languages, hybrid search |
+| YUYU Nihongo | yuyunihongo.com | Client Project, Live | 4,200+ students, 434+ episodes, 5 JLPT |
+
+### Tag Taxonomy
+
+| Tag | Color | CSS class | Usage |
+|-----|-------|-----------|-------|
+| Award | Orange | `.tag-award` | Hackathon placement |
+| Live | Green | `.tag-live` | Deployed and accessible |
+| Hackathon | Purple | `.tag-hackathon` | Built at a hackathon |
+| Client | Teal | `.tag-client` | Built for external client |
 
 ---
 
-## Improvement Roadmap
+## Improvement Roadmap — Status
 
-### P0 — Critical (do these first, highest impact per effort)
+### P0 — Critical ✅ All Done
 
-#### 1. Project screenshots / preview images
-The single biggest gap. The page is 100% text. A visitor scrolling through sees wall of cards that all look the same. Even a simple browser-frame screenshot per project would transform the visual impact.
+1. ✅ **Project screenshots** — Playwright captures of all 5 live projects + styled placeholder for Tomato RAG
+2. ✅ **OG + Twitter Card meta tags** — 1200×630 OG image generated via Playwright
+3. ✅ **Favicon** — SVG "II" monogram, linked as `image/svg+xml`
+4. ✅ **Featured project treatment** — Accent border, gradient bg, "Featured Project" label for Crisis Memory Bridge
+5. ✅ **Client project tag** — Teal "Client Project" tag on YUYU Nihongo
 
-- Capture a clean screenshot of each project's main screen
-- Crop to 16:9 or 3:2 ratio, optimize to WebP at ~80KB each
-- Display above the project description inside each card
-- Add `loading="lazy"` to all images except the first (Crisis Memory Bridge)
-- For projects without a visual UI (Tomato RAG), use a code screenshot or architecture diagram
+### P1 — High Impact ✅ All Done
 
-#### 2. Open Graph & social media previews
-Sharing the portfolio link on LinkedIn, Twitter, or in a DM currently shows a bare URL with no preview. This matters because every link shared is a first impression.
+6. ✅ **Stats on project cards** — Accent-colored stat pills on every card (implemented in P0)
+7. ✅ **Hero background visual** — Subtle gradient mesh (blue, purple, green radial blobs)
+8. ✅ **Scroll animations** — `IntersectionObserver` fade-in-up with staggered services, `prefers-reduced-motion` support
+9. ✅ **Active nav link** — Highlights current section on scroll
+10. ✅ **Clickable cards** — Stretched-link pattern, inner links elevated with `z-index`
+11. ✅ **Services section** — 4 cards with SVG icons between hero and projects
 
-```html
-<meta property="og:title" content="Ishaq Ibrahim — AI-Powered Web Applications">
-<meta property="og:description" content="Full-stack developer in Tokyo. I build AI-integrated products for crisis counseling, mental health, legal protection, and more.">
-<meta property="og:image" content="https://your-domain.com/og-image.png">
-<meta property="og:url" content="https://your-domain.com">
-<meta property="og:type" content="website">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Ishaq Ibrahim — AI-Powered Web Applications">
-<meta name="twitter:description" content="Full-stack developer in Tokyo building AI-integrated products.">
-<meta name="twitter:image" content="https://your-domain.com/og-image.png">
-```
+### P2 — Medium Impact ✅ Implemented (2 deferred)
 
-- Create a 1200x630 OG image (dark background, name, tagline, maybe a subtle gradient)
-- Add the meta tags to `<head>`
+12. ✅ **Accessibility** — Skip-to-content, `:focus-visible`, `aria-label`, `aria-hidden`, `role="navigation"`
+13. ✅ **Mobile nav** — Hamburger toggle, animated X, dropdown with large tap targets, auto-close
+14. ⏳ **Resume/CV download** — Needs PDF file; add to repo then link from About section and nav
+15. ⏳ **Custom domain** — Purchase domain, connect to Vercel, update OG meta and sitemap
+16. ✅ **Writing section** — 2 post previews ("Crisis Memory Bridge" + "memU SDK") with "Coming soon"
+17. ✅ **Branding** — "II" SVG monogram in nav next to name
 
-#### 3. Favicon
-Tab currently shows the default browser icon. Looks unfinished.
+### P3 — Nice to Have ✅ Implemented (3 deferred)
 
-- Create a simple favicon (initials "II" or a minimal geometric mark)
-- Add as both `.ico` and `.png` (32x32, 180x180 for Apple touch)
-- `<link rel="icon" type="image/png" href="/favicon.png">`
-
-#### 4. Featured project treatment
-Crisis Memory Bridge (2nd place hackathon winner) currently looks identical to every other card. The flagship project should command attention.
-
-- Give it a distinct visual treatment: slightly larger card, accent border, or a gradient background tint
-- Add a callout line: "Won 2nd place at Vibe Coding with Memory Hackathon — Shibuya Hikarie, Tokyo"
-- Optionally pull it out of the grid and give it a hero-style full-width layout
-
-#### 5. "Client project" tag for YUYU Nihongo
-This is the only project built for a real external client with real users (4,200+ students). That's a massive credibility signal for freelance work. Currently it has only a "Live" tag and looks the same as personal hackathon projects.
-
-- Add a new tag style: `tag-client` (maybe a blue or teal color distinct from hackathon purple)
-- Label it "Client Project" or "Production"
-- Mention "4,200+ students" more prominently — maybe as a stat callout
+18. ⏳ **Case study pages** — Needs content written (problem, architecture, decisions, results)
+19. ⏳ **Testimonials** — Needs quotes from hackathon judges or YUYU Nihongo client
+20. ⏳ **GitHub activity** — Skipped (external API complexity vs static site simplicity)
+21. ✅ **Dark/light mode** — Sun/moon toggle, `prefers-color-scheme` default, `localStorage` persistence
+22. ✅ **Analytics** — Vercel Analytics script tag (enable in Vercel dashboard > Settings > Analytics)
+23. ✅ **JSON-LD structured data** — Person schema in `<head>`
+24. ✅ **robots.txt & sitemap.xml** — Both created (update sitemap URL when custom domain is set)
 
 ---
 
-### P1 — High Impact (do these next)
+## Remaining TODO (manual steps)
 
-#### 6. Key metrics / stats on project cards
-Each project has an impressive number buried in the description. Pull it out visually.
-
-- Crisis Memory Bridge: "20+ features", "8 parallel LLM operations", "2nd Place"
-- ShieldAgent: "6 languages supported", "2M+ workers affected"
-- MamaKokoro: "7 memory categories", "4-tier crisis detection"
-- NeoLocal: "Bilingual AI matching", "On-chain reputation"
-- Tomato RAG: "300x cache speedup", "3 languages", "Hybrid search"
-- YUYU Nihongo: "4,200+ students", "434+ episodes", "5 JLPT levels"
-
-Render as small stat pills or a row of numbers above the description.
-
-#### 7. Hero background visual
-The hero section is plain black with text. Adding a subtle visual element would make the first impression more memorable without distracting from the content.
-
-Options (pick one):
-- Subtle gradient mesh (blurred color blobs, very low opacity)
-- Dot grid pattern that fades out
-- Geometric lines / network graph aesthetic
-- Noise texture overlay
-
-Keep it extremely subtle — the text is the hero, not the background.
-
-#### 8. Entrance animations on scroll
-Elements currently just exist. Subtle fade-in-up as sections enter the viewport adds polish and guides the eye.
-
-- Use `IntersectionObserver` (no library needed)
-- Animate: project cards, section titles, about content
-- Keep it minimal: `opacity: 0 → 1`, `translateY(20px) → 0`, `duration: 0.4s`
-- Don't animate nav or hero (they should be instant)
-- Add `prefers-reduced-motion` media query to disable for accessibility
-
-#### 9. Active nav link on scroll
-As the user scrolls, the nav should highlight which section they're in. This is standard and feels polished when present, broken when absent.
-
-- Use `IntersectionObserver` on each section
-- Toggle an `.active` class on the corresponding nav link
-- Style: color change to `var(--text)` or underline
-
-#### 10. Make entire project card clickable
-The live demo links are small text at the bottom of each card. Many visitors will try to click the card itself and nothing will happen.
-
-- Wrap the card in an `<a>` tag linking to the live demo (or GitHub if no demo)
-- Keep the individual links at the bottom as secondary navigation
-- Add `cursor: pointer` and a more prominent hover state
-
-#### 11. Services section
-If the goal is freelance work, potential clients need to immediately understand what you offer. "I build AI-powered web applications" is your identity — but what can you build for *them*?
-
-Add a section between Hero and Projects:
-
-- **AI Integration** — LLM-powered features, chatbots, RAG pipelines, memory systems
-- **Full-Stack Web Apps** — MVPs, dashboards, internal tools, from backend to frontend
-- **Real-Time Systems** — Streaming, SSE, live data, async architectures
-- **Multilingual Apps** — EN/JA localization, bilingual systems, Japan market
-
-Keep it brief — 4 cards with icons, 1-2 sentences each.
-
----
-
-### P2 — Medium Impact (polish & professionalism)
-
-#### 12. Accessibility improvements
-- Add a skip-to-content link (hidden visually, visible on focus)
-- Add visible focus outlines for keyboard navigation (`:focus-visible` with accent color ring)
-- Check color contrast: `var(--text-muted)` #8b8b94 on `var(--bg)` #0a0a0b — verify WCAG AA compliance
-- Add `aria-label` to external links ("Opens in new tab")
-- Add `lang` attribute updates if any Japanese text is included
-
-#### 13. Mobile nav improvements
-Current responsive styles are minimal. On small screens:
-- Consider a hamburger menu or collapsible nav (saves space, feels more native)
-- Increase tap target sizes for nav links
-- Tighten card padding on mobile (32px → 20px)
-- Stack hero buttons vertically on very narrow screens
-
-#### 14. Resume / CV download
-A "Download Resume" button in the About section or nav. Many recruiters and clients want a PDF they can forward internally.
-
-- Create a clean 1-page PDF resume
-- Host it in the repo or on a CDN
-- Link from both the About section and the nav
-
-#### 15. Custom domain
-The Vercel URL will be something like `portfolio-xyz.vercel.app`. A custom domain like `ishaqibrahim.dev` or `ishaq.dev` looks significantly more professional.
-
-- Purchase a domain
-- Connect to Vercel
-- Update all OG meta tags and canonical URL
-
-#### 16. Blog / writing section
-Even if empty at launch, having the structure for writing signals that you think beyond just code. Link to it from the nav.
-
-- Can start with 1-2 posts:
-  - "How I built Crisis Memory Bridge in a weekend" (repurpose from the CLAUDE.md)
-  - "7 things the memU SDK needs for domain applications" (the feedback section from CLAUDE.md)
-- These posts double as SEO content and demonstrate thought leadership
-
-#### 17. Subtle branding / visual identity
-Currently there's no visual element that's "yours." Something small and consistent:
-- A monogram or logo mark in the nav (replace "ishaq ibrahim" text)
-- A consistent color — the accent blue is fine, but could be more distinctive
-- A subtle pattern or motif that appears on the site and in OG images
-
----
-
-### P3 — Nice to Have (future iterations)
-
-#### 18. Project case study pages
-For the top 2-3 projects, a dedicated page that goes deeper:
-- Problem statement
-- Technical architecture diagram
-- Key decisions and tradeoffs
-- Screenshots / demo GIF
-- Results / metrics
-- What you'd do differently
-
-This turns "I built a thing" into "I think deeply about problems." High value for senior roles and consulting.
-
-#### 19. Testimonials / social proof
-If any hackathon judges, clients (YUYU Nihongo), or collaborators can provide a quote, even one testimonial adds credibility. The hackathon results announcement itself could be quoted.
-
-#### 20. GitHub activity integration
-A live or static GitHub contribution graph or "recent commits" section shows you're actively building, not just showing old work.
-
-#### 21. Dark/light mode toggle
-Currently dark only. Some visitors (especially corporate/hiring) prefer light mode. Not critical but signals attention to detail.
-
-#### 22. Analytics
-Add a lightweight analytics solution to understand traffic:
-- Vercel Analytics (free tier, built-in)
-- Or Plausible / Umami (privacy-friendly, self-hostable)
-- Track: page views, project link clicks, contact button clicks
-
-#### 23. Structured data (JSON-LD)
-Add Person schema for better Google search presence:
-```json
-{
-  "@context": "https://schema.org",
-  "@type": "Person",
-  "name": "Ishaq Ibrahim",
-  "url": "https://your-domain.com",
-  "jobTitle": "Full-Stack Developer",
-  "knowsAbout": ["AI", "LLM Integration", "Web Development"],
-  "sameAs": [
-    "https://github.com/Gentle-mann",
-    "https://www.linkedin.com/in/ishaq-ibrahim-3a8b85251"
-  ]
-}
-```
-
-#### 24. robots.txt & sitemap.xml
-Basic SEO hygiene:
-- `robots.txt`: Allow all crawlers
-- `sitemap.xml`: List the page URL(s)
-- Submit to Google Search Console
+1. **Enable Vercel Analytics** — Go to Vercel dashboard > project > Settings > Analytics > Enable
+2. **Custom domain** — Purchase and connect, then update `sitemap.xml` URL and add `og:url` meta tag
+3. **Resume PDF** — Create and add to repo as `/resume.pdf`, then add download button to nav/about
+4. **Write blog posts** — Replace "Coming soon" with actual content for the 2 writing section posts
+5. **Testimonials** — Collect quotes from hackathon judges or YUYU Nihongo client
+6. **Case studies** — Write detailed pages for top 2-3 projects (Crisis Memory Bridge, YUYU Nihongo)
+7. **Submit to Google Search Console** — Verify site ownership, submit sitemap
 
 ---
 
 ## Tech Decisions
 
-- **Single HTML file**: Keeps deployment trivial. No build step, no framework overhead. Vercel serves it as-is.
-- **No JavaScript (currently)**: Fine for MVP. Will need minimal JS for scroll animations (IntersectionObserver), nav highlighting, and potentially image lazy loading.
-- **Embedded CSS**: Eliminates a network request. Fine for <600 lines. If CSS grows beyond ~800 lines, extract to a separate file.
-- **No framework**: This is a static portfolio, not a web app. Vanilla HTML/CSS/JS is the right choice. Don't add React/Next.js unless blog/case study pages justify it.
+- **Single HTML file**: No build step, no framework overhead. Vercel serves as-is.
+- **Embedded CSS + JS**: Eliminates network requests. ~700 lines CSS, ~50 lines JS — within single-file comfort zone.
+- **No framework**: Static portfolio, not a web app. Vanilla HTML/CSS/JS is the right choice.
+- **CSS custom properties**: Enable dark/light mode with a single class toggle. All colors cascade from `:root`.
+- **IntersectionObserver**: Native API for scroll animations and nav highlighting. No library needed.
+- **Stretched-link pattern**: Makes cards clickable without nesting `<a>` tags (invalid HTML). Inner links elevated with `z-index`.
+- **`html.js` guard**: Animation CSS only applies when JS loads. Without JS, everything renders normally.
+- **Playwright for screenshots**: Programmatic captures of live project URLs + HTML-rendered placeholders.
 
-## File Structure (target)
+## File Structure
 
 ```
 portfolio/
-├── index.html          # Main portfolio page
-├── favicon.png         # Favicon
-├── og-image.png        # Open Graph preview image (1200x630)
-├── robots.txt          # SEO
-├── sitemap.xml         # SEO
+├── index.html          # Main portfolio page (~1,140 lines)
+├── favicon.svg         # SVG favicon ("II" initials)
+├── og-image.png        # Open Graph preview image (1200×630)
+├── robots.txt          # SEO — allow all crawlers
+├── sitemap.xml         # SEO — homepage entry
+├── capture.mjs         # Playwright script to capture project screenshots
+├── og-capture.mjs      # Playwright script to generate OG image + Tomato RAG placeholder
+├── package.json        # Playwright dependency (dev only)
+├── .gitignore          # Excludes node_modules/
+├── CLAUDE.md           # This file
 └── images/
-    ├── crisis-memory-bridge.webp
-    ├── shieldagent.webp
-    ├── mama-kokoro.webp
-    ├── neolocal.webp
-    ├── tomato-rag.webp
-    └── yuyu-nihongo.webp
+    ├── crisis-memory-bridge.png
+    ├── shieldagent.png
+    ├── mama-kokoro.png
+    ├── neolocal.png
+    ├── tomato-rag.png       # Styled placeholder (no live URL)
+    └── yuyu-nihongo.png
 ```
