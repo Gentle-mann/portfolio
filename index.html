@@ -54,6 +54,47 @@
     a { color: var(--accent); text-decoration: none; transition: opacity 0.2s; }
     a:hover { opacity: 0.8; }
 
+    /* ── Accessibility ── */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: 16px;
+      padding: 8px 16px;
+      background: var(--accent);
+      color: var(--bg);
+      border-radius: 0 0 8px 8px;
+      z-index: 200;
+      font-size: 14px;
+      font-weight: 500;
+      opacity: 1;
+    }
+
+    .skip-link:focus {
+      top: 0;
+      opacity: 1;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    :focus:not(:focus-visible) {
+      outline: none;
+    }
+
     .container {
       max-width: 960px;
       margin: 0 auto;
@@ -84,6 +125,13 @@
       font-size: 15px;
       color: var(--text);
       letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-mark {
+      flex-shrink: 0;
     }
 
     nav .nav-links {
@@ -101,6 +149,37 @@
     nav .nav-links a:hover { color: var(--text); opacity: 1; }
 
     nav .nav-links a.active { color: var(--text); }
+
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+    }
+
+    .nav-toggle span {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: var(--text);
+      border-radius: 1px;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+
+    .nav-toggle.active span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .nav-toggle.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .nav-toggle.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -5px);
+    }
 
     /* ── Hero ── */
     .hero {
@@ -436,6 +515,47 @@
 
     .project-links a:hover { color: var(--accent); opacity: 1; }
 
+    /* ── Writing ── */
+    .posts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .post-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      transition: border-color 0.2s;
+    }
+
+    .post-card:hover {
+      border-color: #3a3a40;
+    }
+
+    .post-date {
+      font-size: 13px;
+      color: var(--accent);
+      margin-bottom: 12px;
+      display: block;
+      font-weight: 500;
+    }
+
+    .post-card h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      letter-spacing: -0.3px;
+      line-height: 1.3;
+    }
+
+    .post-card p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
     /* ── About ── */
     .about-content {
       display: grid;
@@ -529,11 +649,48 @@
       .project-header { flex-direction: column; }
       .project-card-body { padding: 20px; }
       .about-content { grid-template-columns: 1fr; gap: 32px; }
-      nav .nav-links { gap: 16px; }
-      nav .nav-links a { font-size: 13px; }
       .contact-links { flex-direction: column; align-items: center; }
       .project-stats { gap: 10px; }
       .services-grid { grid-template-columns: 1fr; }
+      .posts-grid { grid-template-columns: 1fr; }
+      .hero-links { flex-direction: column; align-items: flex-start; }
+
+      /* Hamburger nav */
+      .nav-toggle {
+        display: flex;
+      }
+
+      nav .nav-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 56px;
+        left: 0;
+        right: 0;
+        background: rgba(10, 10, 11, 0.95);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border);
+        padding: 8px 24px;
+        gap: 0;
+      }
+
+      nav .nav-links.open {
+        display: flex;
+      }
+
+      nav .nav-links li {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      }
+
+      nav .nav-links li:last-child {
+        border-bottom: none;
+      }
+
+      nav .nav-links a {
+        font-size: 16px;
+        display: block;
+        padding: 14px 0;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -548,12 +705,26 @@
 </head>
 <body>
 
-  <nav>
+  <a href="#services" class="skip-link">Skip to content</a>
+
+  <nav role="navigation" aria-label="Main navigation">
     <div class="container">
-      <span class="logo">ishaq ibrahim</span>
+      <span class="logo">
+        <svg class="logo-mark" width="24" height="24" viewBox="0 0 32 32" aria-hidden="true">
+          <rect width="32" height="32" rx="6" fill="var(--accent)"/>
+          <text x="16" y="22" text-anchor="middle" font-family="-apple-system,system-ui,sans-serif" font-size="18" font-weight="700" fill="var(--bg)">II</text>
+        </svg>
+        ishaq ibrahim
+      </span>
+      <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
       <ul class="nav-links">
         <li><a href="#services">Services</a></li>
         <li><a href="#projects">Projects</a></li>
+        <li><a href="#writing">Writing</a></li>
         <li><a href="#about">About</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
@@ -568,8 +739,8 @@
       <p>Full-stack developer specializing in LLM integration, real-time systems, and products that solve real problems. Based in Tokyo.</p>
       <div class="hero-links">
         <a href="#contact" class="btn btn-primary">Get in touch</a>
-        <a href="https://github.com/Gentle-mann" class="btn btn-secondary" target="_blank" rel="noopener">GitHub</a>
-        <a href="https://www.linkedin.com/in/ishaq-ibrahim-3a8b85251" class="btn btn-secondary" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://github.com/Gentle-mann" class="btn btn-secondary" target="_blank" rel="noopener" aria-label="GitHub profile (opens in new tab)">GitHub</a>
+        <a href="https://www.linkedin.com/in/ishaq-ibrahim-3a8b85251" class="btn btn-secondary" target="_blank" rel="noopener" aria-label="LinkedIn profile (opens in new tab)">LinkedIn</a>
       </div>
     </div>
   </header>
@@ -583,7 +754,7 @@
       <div class="services-grid">
         <div class="service-card fade-in-up">
           <div class="service-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"/>
             </svg>
           </div>
@@ -593,7 +764,7 @@
 
         <div class="service-card fade-in-up">
           <div class="service-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
             </svg>
           </div>
@@ -603,7 +774,7 @@
 
         <div class="service-card fade-in-up">
           <div class="service-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
             </svg>
           </div>
@@ -613,7 +784,7 @@
 
         <div class="service-card fade-in-up">
           <div class="service-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
             </svg>
           </div>
@@ -816,6 +987,28 @@
     </div>
   </section>
 
+  <!-- Writing -->
+  <section id="writing">
+    <div class="container">
+      <div class="section-label">Writing</div>
+      <h2 class="section-title">Thoughts &amp; learnings</h2>
+
+      <div class="posts-grid">
+        <article class="post-card fade-in-up">
+          <span class="post-date">Coming soon</span>
+          <h3>How I Built Crisis Memory Bridge in a Weekend</h3>
+          <p>The architecture decisions, LLM orchestration patterns, and memory design behind a 2nd-place hackathon project at Shibuya Hikarie.</p>
+        </article>
+
+        <article class="post-card fade-in-up">
+          <span class="post-date">Coming soon</span>
+          <h3>What the memU SDK Needs for Domain Applications</h3>
+          <p>Lessons from building two production apps with the memU memory framework — what works, what's missing, and what I'd change.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
   <!-- About -->
   <section id="about">
     <div class="container">
@@ -859,8 +1052,8 @@
       <p>I'm available for freelance projects, contract work, and collaboration. If you have something in mind, reach out.</p>
       <div class="contact-links">
         <a href="mailto:ishaqibrahim017@gmail.com" class="btn btn-primary">Email me</a>
-        <a href="https://github.com/Gentle-mann" class="btn btn-secondary" target="_blank" rel="noopener">GitHub</a>
-        <a href="https://www.linkedin.com/in/ishaq-ibrahim-3a8b85251" class="btn btn-secondary" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://github.com/Gentle-mann" class="btn btn-secondary" target="_blank" rel="noopener" aria-label="GitHub profile (opens in new tab)">GitHub</a>
+        <a href="https://www.linkedin.com/in/ishaq-ibrahim-3a8b85251" class="btn btn-secondary" target="_blank" rel="noopener" aria-label="LinkedIn profile (opens in new tab)">LinkedIn</a>
       </div>
     </div>
   </section>
@@ -903,6 +1096,24 @@
     }, { rootMargin: '-40% 0px -55% 0px' });
 
     sections.forEach(section => navObserver.observe(section));
+
+    // ── Mobile nav toggle ──
+    const navToggle = document.querySelector('.nav-toggle');
+    const navLinksList = document.querySelector('.nav-links');
+
+    navToggle.addEventListener('click', () => {
+      const open = navLinksList.classList.toggle('open');
+      navToggle.classList.toggle('active', open);
+      navToggle.setAttribute('aria-expanded', String(open));
+    });
+
+    navLinksList.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinksList.classList.remove('open');
+        navToggle.classList.remove('active');
+        navToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
   </script>
 
 </body>
