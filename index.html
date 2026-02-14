@@ -100,9 +100,30 @@
 
     nav .nav-links a:hover { color: var(--text); opacity: 1; }
 
+    nav .nav-links a.active { color: var(--text); }
+
     /* ── Hero ── */
     .hero {
       padding: 160px 0 100px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(600px circle at 15% 35%, rgba(109, 159, 255, 0.08), transparent 60%),
+        radial-gradient(400px circle at 75% 15%, rgba(178, 141, 255, 0.06), transparent 50%),
+        radial-gradient(500px circle at 60% 85%, rgba(79, 199, 142, 0.04), transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .hero .container {
+      position: relative;
+      z-index: 1;
     }
 
     .hero-badge {
@@ -191,6 +212,50 @@
       margin-bottom: 48px;
     }
 
+    /* ── Services ── */
+    .services-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .service-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      transition: border-color 0.2s;
+    }
+
+    .service-card:hover {
+      border-color: #3a3a40;
+    }
+
+    .service-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--accent-soft);
+      border: 1px solid rgba(109, 159, 255, 0.2);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      color: var(--accent);
+    }
+
+    .service-card h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .service-card p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
     /* ── Projects ── */
     .projects-grid {
       display: flex;
@@ -204,6 +269,8 @@
       border-radius: var(--radius);
       overflow: hidden;
       transition: border-color 0.2s, transform 0.2s;
+      position: relative;
+      cursor: pointer;
     }
 
     .project-card:hover {
@@ -256,6 +323,17 @@
       font-size: 20px;
       font-weight: 600;
       letter-spacing: -0.3px;
+      color: var(--text);
+    }
+
+    a.project-name:hover { opacity: 1; color: var(--text); }
+
+    /* Stretched link — makes entire card clickable */
+    .stretched-link::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 0;
     }
 
     .project-tags {
@@ -263,6 +341,8 @@
       gap: 6px;
       flex-wrap: wrap;
       flex-shrink: 0;
+      position: relative;
+      z-index: 1;
     }
 
     .tag {
@@ -341,6 +421,8 @@
     .project-links {
       display: flex;
       gap: 16px;
+      position: relative;
+      z-index: 1;
     }
 
     .project-links a {
@@ -423,6 +505,23 @@
       font-size: 13px;
     }
 
+    /* ── Scroll animations ── */
+    html.js .fade-in-up {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    html.js .fade-in-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Stagger service cards */
+    html.js .services-grid .fade-in-up:nth-child(2) { transition-delay: 0.08s; }
+    html.js .services-grid .fade-in-up:nth-child(3) { transition-delay: 0.16s; }
+    html.js .services-grid .fade-in-up:nth-child(4) { transition-delay: 0.24s; }
+
     /* ── Responsive ── */
     @media (max-width: 640px) {
       .hero { padding: 120px 0 60px; }
@@ -434,6 +533,16 @@
       nav .nav-links a { font-size: 13px; }
       .contact-links { flex-direction: column; align-items: center; }
       .project-stats { gap: 10px; }
+      .services-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html.js .fade-in-up {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+      html { scroll-behavior: auto; }
     }
   </style>
 </head>
@@ -443,6 +552,7 @@
     <div class="container">
       <span class="logo">ishaq ibrahim</span>
       <ul class="nav-links">
+        <li><a href="#services">Services</a></li>
         <li><a href="#projects">Projects</a></li>
         <li><a href="#about">About</a></li>
         <li><a href="#contact">Contact</a></li>
@@ -464,6 +574,56 @@
     </div>
   </header>
 
+  <!-- Services -->
+  <section id="services">
+    <div class="container">
+      <div class="section-label">Services</div>
+      <h2 class="section-title">What I can build for you</h2>
+
+      <div class="services-grid">
+        <div class="service-card fade-in-up">
+          <div class="service-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"/>
+            </svg>
+          </div>
+          <h3>AI Integration</h3>
+          <p>LLM-powered features, chatbots, RAG pipelines, and memory systems that make your product smarter.</p>
+        </div>
+
+        <div class="service-card fade-in-up">
+          <div class="service-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <h3>Full-Stack Web Apps</h3>
+          <p>MVPs, dashboards, and internal tools — from database design to polished frontend.</p>
+        </div>
+
+        <div class="service-card fade-in-up">
+          <div class="service-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+            </svg>
+          </div>
+          <h3>Real-Time Systems</h3>
+          <p>Live streaming, SSE, WebSockets, and async architectures for responsive experiences.</p>
+        </div>
+
+        <div class="service-card fade-in-up">
+          <div class="service-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+          </div>
+          <h3>Multilingual Apps</h3>
+          <p>EN/JA localization, bilingual interfaces, and products built for the Japan market.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Projects -->
   <section id="projects">
     <div class="container">
@@ -473,12 +633,12 @@
       <div class="projects-grid">
 
         <!-- Crisis Memory Bridge — FEATURED -->
-        <div class="project-card featured">
+        <div class="project-card featured fade-in-up">
           <img src="images/crisis-memory-bridge.png" alt="Crisis Memory Bridge — setup screen showing volunteer name input, caller ID, and language toggle" class="project-image" loading="eager">
           <div class="project-card-body">
             <div class="featured-label">Featured Project</div>
             <div class="project-header">
-              <span class="project-name">Crisis Memory Bridge</span>
+              <a href="https://web-production-b1d2c.up.railway.app/" target="_blank" rel="noopener" class="project-name stretched-link">Crisis Memory Bridge</a>
               <div class="project-tags">
                 <span class="tag tag-award">2nd Place</span>
                 <span class="tag tag-live">Live</span>
@@ -505,11 +665,11 @@
         </div>
 
         <!-- ShieldAgent -->
-        <div class="project-card">
+        <div class="project-card fade-in-up">
           <img src="images/shieldagent.png" alt="ShieldAgent — AI legal shield interface for migrant worker protection" class="project-image" loading="lazy">
           <div class="project-card-body">
             <div class="project-header">
-              <span class="project-name">ShieldAgent</span>
+              <a href="https://shieldagent-hackathon-jvbnsbtsbmxbtcdvhsnzkd.streamlit.app/" target="_blank" rel="noopener" class="project-name stretched-link">ShieldAgent</a>
               <div class="project-tags">
                 <span class="tag tag-live">Live</span>
                 <span class="tag tag-hackathon">Hackathon</span>
@@ -535,11 +695,11 @@
         </div>
 
         <!-- MamaKokoro -->
-        <div class="project-card">
+        <div class="project-card fade-in-up">
           <img src="images/mama-kokoro.png" alt="MamaKokoro — AI companion for postpartum depression with chat and mood tracking" class="project-image" loading="lazy">
           <div class="project-card-body">
             <div class="project-header">
-              <span class="project-name">MamaKokoro</span>
+              <a href="https://mama-kokoro.vercel.app" target="_blank" rel="noopener" class="project-name stretched-link">MamaKokoro</a>
               <div class="project-tags">
                 <span class="tag tag-live">Live</span>
                 <span class="tag tag-hackathon">Hackathon</span>
@@ -565,11 +725,11 @@
         </div>
 
         <!-- NeoLocal -->
-        <div class="project-card">
+        <div class="project-card fade-in-up">
           <img src="images/neolocal.png" alt="NeoLocal — AI agent matching Web3 tourists with local community members in Japan" class="project-image" loading="lazy">
           <div class="project-card-body">
             <div class="project-header">
-              <span class="project-name">NeoLocal</span>
+              <a href="https://neolocal.vercel.app/" target="_blank" rel="noopener" class="project-name stretched-link">NeoLocal</a>
               <div class="project-tags">
                 <span class="tag tag-live">Live</span>
                 <span class="tag tag-hackathon">Hackathon</span>
@@ -594,11 +754,11 @@
         </div>
 
         <!-- Tomato RAG -->
-        <div class="project-card">
+        <div class="project-card fade-in-up">
           <img src="images/tomato-rag.png" alt="Tomato RAG Chatbot — multilingual agricultural knowledge system" class="project-image" loading="lazy">
           <div class="project-card-body">
             <div class="project-header">
-              <span class="project-name">Tomato RAG Chatbot</span>
+              <a href="https://github.com/Gentle-mann" target="_blank" rel="noopener" class="project-name stretched-link">Tomato RAG Chatbot</a>
             </div>
             <p class="project-desc">Multilingual RAG chatbot that answers tomato cultivation questions from Japanese PDF manuals and video transcripts. Hybrid search with dense + sparse vectors, source-aware citations, and automatic query translation across English, Nepali, and Japanese.</p>
             <div class="project-stats">
@@ -621,11 +781,11 @@
         </div>
 
         <!-- YUYU Nihongo -->
-        <div class="project-card">
+        <div class="project-card fade-in-up">
           <img src="images/yuyu-nihongo.png" alt="YUYU Nihongo — Japanese learning podcast platform with e-books and lessons" class="project-image" loading="lazy">
           <div class="project-card-body">
             <div class="project-header">
-              <span class="project-name">YUYU Nihongo</span>
+              <a href="https://yuyunihongo.com" target="_blank" rel="noopener" class="project-name stretched-link">YUYU Nihongo</a>
               <div class="project-tags">
                 <span class="tag tag-client">Client Project</span>
                 <span class="tag tag-live">Live</span>
@@ -645,6 +805,7 @@
               <span class="tech-tag">Vercel</span>
             </div>
             <div class="project-links">
+              <a href="https://yuyunihongo.com" target="_blank" rel="noopener">Live Site &rarr;</a>
               <a href="https://open.spotify.com/show/0hQDsR0brfk88Nls8fydo4" target="_blank" rel="noopener">Podcast &rarr;</a>
               <a href="https://github.com/Gentle-mann" target="_blank" rel="noopener">Source Code &rarr;</a>
             </div>
@@ -661,7 +822,7 @@
       <div class="section-label">About</div>
       <h2 class="section-title">Background</h2>
 
-      <div class="about-content">
+      <div class="about-content fade-in-up">
         <div class="about-text">
           <p>I'm a developer based in Tokyo who builds AI-integrated web applications. I work across the full stack — from FastAPI and Express backends to React and vanilla JS frontends — with a focus on LLM integration, real-time streaming, and products that address real-world problems.</p>
           <p>Most of my recent work has been in the hackathon circuit in Japan, building tools for crisis counseling, maternal mental health, migrant worker rights, and agricultural knowledge systems. I care about building things that matter for people who need them.</p>
@@ -692,7 +853,7 @@
 
   <!-- Contact -->
   <section id="contact" class="contact-section">
-    <div class="container">
+    <div class="container fade-in-up">
       <div class="section-label">Contact</div>
       <h2 class="section-title">Let's work together</h2>
       <p>I'm available for freelance projects, contract work, and collaboration. If you have something in mind, reach out.</p>
@@ -709,6 +870,40 @@
       Ishaq Ibrahim &middot; Tokyo, Japan
     </div>
   </footer>
+
+  <script>
+    // Enable animation styles
+    document.documentElement.classList.add('js');
+
+    // ── Scroll animations ──
+    const animObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          animObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in-up').forEach(el => animObserver.observe(el));
+
+    // ── Active nav link on scroll ──
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('nav .nav-links a');
+
+    const navObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.getAttribute('id');
+          navLinks.forEach(link => {
+            link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+          });
+        }
+      });
+    }, { rootMargin: '-40% 0px -55% 0px' });
+
+    sections.forEach(section => navObserver.observe(section));
+  </script>
 
 </body>
 </html>
