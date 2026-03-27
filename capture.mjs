@@ -6,6 +6,11 @@ const projects = [
   { name: 'mama-kokoro', url: 'https://mama-kokoro.vercel.app' },
   { name: 'neolocal', url: 'https://neolocal.vercel.app/' },
   { name: 'yuyu-nihongo', url: 'https://yuyu-nihongo-website.vercel.app/' },
+  { name: 'kamishield', url: 'https://client-sigma-nine-62.vercel.app' },
+  { name: 'guidesight', url: 'https://guidesight.vercel.app' },
+  { name: 'richards-law', url: 'https://richards-law-intake-psi.vercel.app' },
+  { name: 'medbridge', url: 'https://traemedbridge9oz5.vercel.app' },
+  { name: 'stylesgo', url: 'https://stylesgoapp.com' },
 ];
 
 const browser = await chromium.launch();
